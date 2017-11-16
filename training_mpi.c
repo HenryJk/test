@@ -38,7 +38,7 @@ int main(int argc,char *argv[]) {
 		int inmsg[2], outmsg[2];
 		Field myField;
 		initField(&myField);
-		for (i=0; i<3; i++) { 														//9000 rounds
+		for (i=0; i<9000; i++) { 														//9000 rounds
 		
 			myField.old_ball_coord[0] = myField.ball_coord[0];
 			myField.old_ball_coord[1] = myField.ball_coord[1];
@@ -104,8 +104,8 @@ int main(int argc,char *argv[]) {
 	} else {
 		int inmsg[2], outmsg[2];
 		Player myPlayer;
-		initPlayer(&myPlayer, rank);
-		for (i=0; i<3; i++) {
+		initPlayer(&myPlayer, rank+1);
+		for (i=0; i<9000; i++) {
 			rc = MPI_Recv(inmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD, &Stat);				//receive ball position
 			
 			outmsg[0] = myPlayer.coord[0];															//send initial position
@@ -126,7 +126,7 @@ int main(int argc,char *argv[]) {
 				myPlayer.total_kick++;
 			}
 			
-			Kick(&myPlayer, outmsg, rank);																//Kick the imaginary ball (or real ball if lucky)
+			Kick(&myPlayer, outmsg, rank+1);																//Kick the imaginary ball (or real ball if lucky)
 			
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//Send intended ball location
 			outmsg[0] = myPlayer.total_distance;
