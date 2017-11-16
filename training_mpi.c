@@ -175,14 +175,14 @@ int initPlayer(Player* myPlayer) {
 int Run(Player* myPlayer, int* towards, int* result) {
 	int x = towards[0] - myPlayer->coord[0];
 	int y = towards[1] - myPlayer->coord[1];
-	if (math.abs(x) <= 10) {
+	if (abs(x) <= 10) {
 		result[0] = myPlayer->coord[0] + x;
-		if (math.abs(x) + math.abs(y) <= 10) {
+		if (abs(x) + abs(y) <= 10) {
 			result[1] = myPlayer->coord[1] + y;
 		} else if (y >= 0){
-			result[1] = myPlayer->coord[1] + 10-math.abs(x);
+			result[1] = myPlayer->coord[1] + 10-abs(x);
 		} else {
-			result[1] = myPlayer->coord[1] - 10+math.abs(x);
+			result[1] = myPlayer->coord[1] - 10+abs(x);
 		}
 	} else if (x >= 0) {
 		result[0] = myPlayer->coord[0] + 10;
@@ -191,7 +191,7 @@ int Run(Player* myPlayer, int* towards, int* result) {
 		result[0] = myPlayer->coord[0] - 10;
 		result[1] = myPlayer->coord[1];
 	}
-	return math.min(10, math.abs(x) + math.abs(y));
+	return min(10, abs(x) + abs(y));
 }
 int Kick(Player* myPlayer, int* result) {
 	srand(time(NULL));
