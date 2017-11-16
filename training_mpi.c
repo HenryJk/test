@@ -69,7 +69,7 @@ int main(int argc,char *argv[]) {
 			
 				outmsg[0] = 0;															//tell them they win ball or not
 				if (j == winner_id) {outmsg[0] = 1;}
-				rc = MPI_Send(outmsg, 1, MPI_INT, j, tag, MPI_COMM_WORL);
+				rc = MPI_Send(outmsg, 1, MPI_INT, j, tag, MPI_COMM_WORLD);
 				
 				rc = MPI_Recv(inmsg, 2, MPI_INT, j, tag, MPI_COMM_WORLD, &Stat);		//get where they kick towards
 				
@@ -112,10 +112,10 @@ int main(int argc,char *argv[]) {
 			outmsg[1] = myPlayer.coord[1];
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);
 			
-			myPlayer->total_distance += Run(&myPlayer, inmsg, myPlayer->coord);						//Run to the ball position
+			myPlayer.total_distance += Run(&myPlayer, inmsg, myPlayer.coord);						//Run to the ball position
 			
-			outmsg[0] = myPlayer->coord[0];															//send current position
-			outmsg[1] = myPlayer->coord[1];
+			outmsg[0] = myPlayer.coord[0];															//send current position
+			outmsg[1] = myPlayer.coord[1];
 			rc = MPI_Send(outmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);
 			if (inmsg[0] == outmsg[0] && inmsg[1] == outmsg[1]) {
 				myPlayer.total_reach++;
