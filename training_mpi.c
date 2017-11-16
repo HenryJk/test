@@ -35,6 +35,7 @@ int main(int argc,char *argv[]) {
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	if (rank == PLAYERNUM) {
+		srand(rank + 1);
 		int inmsg[2], outmsg[2];
 		Field myField;
 		initField(&myField);
@@ -161,7 +162,6 @@ int getWinner(Field* myField) {
 			totalReaching++;
 		}
 	}
-	srand(11);
 	if (totalReaching <= 0) {
 		return -1;
 	}
@@ -209,7 +209,6 @@ int Run(Player* myPlayer, int* towards, int* result) {
 	}
 }
 int Kick(Player* myPlayer, int* result, int seed) {
-	srand(seed);
 	result[0] = rand()%128;
 	result[1] = rand()%64;
 	return 0;
