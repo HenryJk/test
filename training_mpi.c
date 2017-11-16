@@ -157,14 +157,14 @@ int getWinner(Field* myField) {
 			totalReaching++;
 		}
 	}
-	srand(time(NULL));
+	srand(rank);
 	if (totalReaching <= 0) {
 		return -1;
 	}
 	return Reaching[rand()%totalReaching];
 }
 int initPlayer(Player* myPlayer) {
-	srand(time(NULL));
+	srand(rank);
 	myPlayer->coord[0] = rand()%128;
 	myPlayer->coord[1] = rand()%64;
 	myPlayer->total_distance = 0;
@@ -176,19 +176,25 @@ int Run(Player* myPlayer, int* towards, int* result) {
 	int x = towards[0] - myPlayer->coord[0];
 	int y = towards[1] - myPlayer->coord[1];
 	if (abs(x) <= 10) {
-		result[0] = myPlayer->coord[0] + x;
+		myPlayer->coord[0] += x;
+		result[0] = myPlayer->coord[0];
 		if (abs(x) + abs(y) <= 10) {
-			result[1] = myPlayer->coord[1] + y;
+			myPlayer->coord[1] += y;
+			result[1] = myPlayer->coord[1];
 		} else if (y >= 0){
-			result[1] = myPlayer->coord[1] + 10-abs(x);
+			myPlayer->coord[1] += 10-abs(x);
+			result[1] = myPlayer->coord[1];
 		} else {
-			result[1] = myPlayer->coord[1] - 10+abs(x);
+			myPlayer->coord[1] -= 10+abs(x);
+			result[1] = myPlayer->coord[1];
 		}
 	} else if (x >= 0) {
-		result[0] = myPlayer->coord[0] + 10;
+		myPlayer->coord[0] += 10;
+		result[0] = myPlayer->coord[0];
 		result[1] = myPlayer->coord[1];
 	} else if (x >= 0) {
-		result[0] = myPlayer->coord[0] - 10;
+		myPlayer->coord[0] -= 10;
+		result[0] = myPlayer->coord[0];
 		result[1] = myPlayer->coord[1];
 	}
 	if (abs(x) + abs(y) > 10) {
@@ -198,7 +204,7 @@ int Run(Player* myPlayer, int* towards, int* result) {
 	}
 }
 int Kick(Player* myPlayer, int* result) {
-	srand(time(NULL));
+	srand(rank);
 	result[0] = rand()%128;
 	result[1] = rand()%64;
 	return 0;
