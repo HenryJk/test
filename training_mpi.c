@@ -191,7 +191,11 @@ int Run(Player* myPlayer, int* towards, int* result) {
 		result[0] = myPlayer->coord[0] - 10;
 		result[1] = myPlayer->coord[1];
 	}
-	return min(10, abs(x) + abs(y));
+	if (abs(x) + abs(y) > 10) {
+		return 10;
+	} else {
+		return abs(x) + abs(y);
+	}
 }
 int Kick(Player* myPlayer, int* result) {
 	srand(time(NULL));
