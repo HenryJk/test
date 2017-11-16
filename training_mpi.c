@@ -110,7 +110,7 @@ int main(int argc,char *argv[]) {
 			
 			outmsg[0] = myPlayer.coord[0];															//send initial position
 			outmsg[1] = myPlayer.coord[1];
-			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);
+			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);
 			
 			myPlayer.total_distance += Run(&myPlayer, inmsg, myPlayer.coord);						//Run to the ball position
 			
