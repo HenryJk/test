@@ -48,9 +48,9 @@ int main(int argc,char *argv[]) {
 		
 			for (j=0; j<PLAYERNUM; j++) { 												//for each player
 			
-				outmsg[0] = Field.ball_coord[0];										//tell them where the ball is
-				outmsg[1] = Field.ball_coord[1];
-				rc = MPI_Send(outmsg, 2, MPI_INT, j, tag, MPI_COMM_WORL);
+				outmsg[0] = myField.ball_coord[0];										//tell them where the ball is
+				outmsg[1] = myField.ball_coord[1];
+				rc = MPI_Send(outmsg, 2, MPI_INT, j, tag, MPI_COMM_WORLD);
 				
 				rc = MPI_Recv(inmsg, 2, MPI_INT, j, tag, MPI_COMM_WORLD, &Stat); 		//remember player old coordinate
 				myField.old_players_coord[2*j] = inmsg[0];
@@ -108,8 +108,8 @@ int main(int argc,char *argv[]) {
 		for (i=0; i<9000; i++) {
 			rc = MPI_Recv(inmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD, &Stat);				//receive ball position
 			
-			outmsg[0] = myPlayer->coord[0];															//send initial position
-			outmsg[1] = myPlayer->coord[1];
+			outmsg[0] = myPlayer.coord[0];															//send initial position
+			outmsg[1] = myPlayer.coord[1];
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);
 			
 			myPlayer->total_distance += Run(&myPlayer, inmsg, myPlayer->coord);						//Run to the ball position
@@ -118,24 +118,24 @@ int main(int argc,char *argv[]) {
 			outmsg[1] = myPlayer->coord[1];
 			rc = MPI_Send(outmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);
 			if (inmsg[0] == outmsg[0] && inmsg[1] == outmsg[1]) {
-				myPlayer->total_reach++;
+				myPlayer.total_reach++;
 			}
 			
 			rc = MPI_Recv(inmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD, &Stat);				//receive whether win ball or not
 			if (inmsg[0] == 1) {
-				myPlayer->total_kick++;
+				myPlayer.total_kick++;
 			}
 			
 			Kick(&myPlayer, outmsg);																//Kick the imaginary ball (or real ball if lucky)
 			
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);						//Send intended ball location
-			outmsg[0] = myPlayer->total_distance;
+			outmsg[0] = myPlayer.total_distance;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);						//send how many distance covered
 			
-			outmsg[0] = myPlayer->total_reach;
+			outmsg[0] = myPlayer.total_reach;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);						//send how many times reach ball
 			
-			outmsg[0] = myPlayer->total_kick;
+			outmsg[0] = myPlayer.total_kick;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORL);						//send how many times kick ball
 		}
 	}
@@ -143,8 +143,8 @@ int main(int argc,char *argv[]) {
 }
 
 int initField(Field* myField) {
-	myField.ball_coord[0] = 64;
-	myField.ball_coord[1] = 32;
+	myField->ball_coord[0] = 64;
+	myField->ball_coord[1] = 32;
 	return 0;
 }
 int getWinner(Field* myField) {
@@ -152,7 +152,7 @@ int getWinner(Field* myField) {
 	int Reaching[PLAYERNUM];
 	int j;
 	for (j=0; j<PLAYERNUM; j++) {
-		if (myField.new_players_coord[2*j] == myField.ball_coord[0] && myField.new_players_coord[2*j+1] == myField.ball_coord[1] ) {
+		if (myField->new_players_coord[2*j] == myField->ball_coord[0] && myField->new_players_coord[2*j+1] == myField->ball_coord[1] ) {
 			Reaching[totalReaching] = j;
 			totalReaching++;
 		}
