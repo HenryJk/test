@@ -38,7 +38,7 @@ int main(int argc,char *argv[]) {
 		int inmsg[2], outmsg[2];
 		Field myField;
 		initField(&myField);
-		for (i=0; i<9000; i++) { 														//9000 rounds
+		for (i=0; i<3; i++) { 														//9000 rounds
 		
 			myField.old_ball_coord[0] = myField.ball_coord[0];
 			myField.old_ball_coord[1] = myField.ball_coord[1];
@@ -80,32 +80,32 @@ int main(int argc,char *argv[]) {
 			}
 			
 			for (j=0; j<PLAYERNUM; j++) {															//for each player
-				//printf("%d ", j);																	//print player id
-				//printf("%d %d ", myField.old_players_coord[2*j], myField.old_players_coord[2*j+1]);	//print old coord
-				//printf("%d %d ", myField.new_players_coord[2*j], myField.new_players_coord[2*j+1]);	//print new coord
+				printf("%d ", j);																	//print player id
+				printf("%d %d ", myField.old_players_coord[2*j], myField.old_players_coord[2*j+1]);	//print old coord
+				printf("%d %d ", myField.new_players_coord[2*j], myField.new_players_coord[2*j+1]);	//print new coord
 				
 				if (myField.new_players_coord[2*j] == myField.old_ball_coord[0] && 				//print reach ball or not
 					myField.new_players_coord[2*j+1] == myField.old_ball_coord[1]) {
-					//printf("1 ");
+					printf("1 ");
 				} else {
-					//printf("0 ");
+					printf("0 ");
 				}
 				
-				//if (j == winner_id) {printf("1 ");} else {printf("0 ");}							//print win the ball or not
+				if (j == winner_id) {printf("1 ");} else {printf("0 ");}							//print win the ball or not
 				
 				rc = MPI_Recv(inmsg, 1, MPI_INT, j, tag, MPI_COMM_WORLD, &Stat);					//ask and print how many distance
-				//printf("%d ", inmsg[0]);
+				printf("%d ", inmsg[0]);
 				rc = MPI_Recv(inmsg, 1, MPI_INT, j, tag, MPI_COMM_WORLD, &Stat);					//ask and print how many times reach ball
-				//printf("%d ", inmsg[0]);
+				printf("%d ", inmsg[0]);
 				rc = MPI_Recv(inmsg, 1, MPI_INT, j, tag, MPI_COMM_WORLD, &Stat);					//ask and print how many times kick ball
-				//printf("%d\n", inmsg[0]);
+				printf("%d\n", inmsg[0]);
 			}
 		}
 	} else {
 		int inmsg[2], outmsg[2];
 		Player myPlayer;
 		initPlayer(&myPlayer, rank);
-		for (i=0; i<9000; i++) {
+		for (i=0; i<3; i++) {
 			rc = MPI_Recv(inmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD, &Stat);				//receive ball position
 			
 			outmsg[0] = myPlayer.coord[0];															//send initial position
@@ -138,7 +138,7 @@ int main(int argc,char *argv[]) {
 			outmsg[0] = myPlayer.total_kick;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//send how many times kick ball
 			if (rank == 1) {
-					printf("%d %d\n", myPlayer.coord[0], myPlayer.coord[1]);
+					//printf("%d %d\n", myPlayer.coord[0], myPlayer.coord[1]);
 			}
 		}
 	}
@@ -179,6 +179,7 @@ int initPlayer(Player* myPlayer, int seed) {
 int Run(Player* myPlayer, int* towards, int* result) {
 	int x = towards[0] - myPlayer->coord[0];
 	int y = towards[1] - myPlayer->coord[1];
+	//printf("%d %d \n", x, y);
 	if (abs(x) <= 10) {
 		myPlayer->coord[0] += x;
 		result[0] = myPlayer->coord[0];
@@ -196,7 +197,7 @@ int Run(Player* myPlayer, int* towards, int* result) {
 		myPlayer->coord[0] += 10;
 		result[0] = myPlayer->coord[0];
 		result[1] = myPlayer->coord[1];
-	} else if (x >= 0) {
+	} else {
 		myPlayer->coord[0] -= 10;
 		result[0] = myPlayer->coord[0];
 		result[1] = myPlayer->coord[1];
