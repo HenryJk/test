@@ -157,7 +157,7 @@ int getWinner(Field* myField) {
 			totalReaching++;
 		}
 	}
-	srand(rank);
+	srand(11);
 	if (totalReaching <= 0) {
 		return -1;
 	}
