@@ -131,7 +131,7 @@ int main(int argc,char *argv[]) {
 			
 			Kick(&myPlayer, outmsg);																//Kick the imaginary ball (or real ball if lucky)
 			
-			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//Send intended ball location
+			rc = MPI_Send(outmsg, 2, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//Send intended ball location
 			outmsg[0] = myPlayer.total_distance;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//send how many distance covered
 			
@@ -140,9 +140,6 @@ int main(int argc,char *argv[]) {
 			
 			outmsg[0] = myPlayer.total_kick;
 			rc = MPI_Send(outmsg, 1, MPI_INT, PLAYERNUM, tag, MPI_COMM_WORLD);						//send how many times kick ball
-			if (rank == 1) {
-					//printf("%d %d\n", myPlayer.coord[0], myPlayer.coord[1]);
-			}
 		}
 	}
 	MPI_Finalize();
