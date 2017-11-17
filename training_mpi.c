@@ -33,11 +33,10 @@ int getWinner(Field*);
 int main(int argc,char *argv[]) {
 	int numtasks, rank, dest, source, rc, count, tag=1, i, j, winner_id;  
 	MPI_Status Stat;
-	srand(rank+1);
-
 	MPI_Init(&argc,&argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	srand(rank+1);
 	if (rank == PLAYERNUM) {
 		int inmsg[2], outmsg[2];
 		Field myField;
