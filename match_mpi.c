@@ -68,7 +68,7 @@ int main(int argc,char *argv[]) {
 		Field myField;
 		resetField(&myField);
 		//for each round
-		for (i=0; i<ROUNDS; i++) {
+		for (i=0; i<2*ROUNDS; i++) {
 			
 			//Synchronise old_ball_coord with ball_coord
 			myField.old_ball_coord[0] = myField.ball_coord[0];
