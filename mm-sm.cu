@@ -39,7 +39,7 @@ long long wall_clock_time()
  *  memory addresses.
  **/
  
- #define BLOCKSIZE 16
+#define BLOCKSIZE 16
  
 void allocate_matrix(matrix* m)
 {
@@ -130,39 +130,37 @@ void mm(matrix a, matrix b, matrix result)
  */
 __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 {
-	__shared__ float sdataA[BLOCKSIZE][BLOCKSIZE];
-	__shared__ float sdataB[BLOCKSIZE][BLOCKSIZE];
-	float c = 0.0, temp;
+	extern __shared__ float sdata[];
+	float c = 0.0;
 	int tidx = threadIdx.x, tidy = threadIdx.y;
 	int i = blockIdx.x * blockDim.x + threadIdx.x; 
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
-	int k, count;
+	int blockArea = blockDim.x * blockDim.y;
+	int indexA, indexB, index, k;
+	
+	indexA = tidx*blockDim.x+tidy;
+	indexB = blockArea + indexA;
 
-	if (i >= (size+BLOCKSIZE-1)/BLOCKSIZE * BLOCKSIZE || j >= (size+BLOCKSIZE-1)/BLOCKSIZE * BLOCKSIZE)
+	if (i >= (size+blockDim.x-1)/blockDim.x * blockDim.x || j >= (size+blockDim.y-1)/blockDim.y * blockDim.y)
 		return;
 	
-	for (count = 0; count < (size+BLOCKSIZE-1)/BLOCKSIZE; count++) {
-		temp = 0.0;
+	for (index = 0; index < (size+blockDim.x-1)/blockDim.x; index++) {
+		//load matrix A elements from 1 block
 		i = blockIdx.x * blockDim.x + tidx;
-		j = count * blockDim.y + tidy;
-		if (i<size && j<size) {
-			sdataA[tidx][tidy] = a.element[i][j];
-		} else {
-			sdataA[tidx][tidy] = 0;
-		}
-		i = count * blockDim.x + tidx;
+		j = index * blockDim.y + tidy;
+		sdata[indexA] = (i<size && j<size) ? a.element[i][j] : 0;
+		
+		//load matrix B elements from 1 block
+		i = index * blockDim.x + tidx;
 		j = blockIdx.y * blockDim.y + tidy;
-		if (i<size && j<size) {
-			sdataB[tidx][tidy] = b.element[i][j];
-		} else {
-			sdataB[tidx][tidy] = 0;
-		}
+		sdata[indexB] = (i<size && j<size) ? b.element[i][j] : 0;
+		
+		//syncthreads
 		__syncthreads();
 		
-		for(k = 0; k < BLOCKSIZE; k++) {
-			temp += sdataA[tidx][k] * sdataB[k][tidy];
+		for(k = 0; k < blockDim.y; k++) {
+			c += sdata[tidx * blockDim.x + k] * sdata[blockArea + k * blockDim.x + tidy];
 		}
-		c += temp;
 		__syncthreads();
 	}
 	i = blockIdx.x * blockDim.x + threadIdx.x; 
@@ -213,7 +211,7 @@ void work()
 	dim = (size % BLOCKSIZE == 0) ? size / BLOCKSIZE : size / BLOCKSIZE + 1; 
 	dim3 grid(dim, dim);	// a grid of CUDA thread blocks
 	before = wall_clock_time();
-	mm_kernel<<<grid, block>>>(a, b, result2, size);
+	mm_kernel<<<grid, block, 2*BLOCKSIZE*BLOCKSIZE*sizeof(float)>>>(a, b, result2, size);
 	cudaDeviceSynchronize();
 	after = wall_clock_time();
 	fprintf(stderr, "Matrix multiplication on GPU took %1.2f seconds\n", ((float)(after - before))/1000000000);
