@@ -23,7 +23,7 @@ typedef struct {
 	int ball_coord[2];
 	int old_players_coord[2 * PLAYERNUM];
 	int new_players_coord[2 * PLAYERNUM];
-	int challengers[PLAYERNUM]
+	int challengers[PLAYERNUM];
 	int old_ball_coord[2];
 } Field;
 int resetField(Field*);
@@ -207,6 +207,7 @@ int main(int argc,char *argv[]) {
 			MPI_Gather(outmsg, 2, MPI_INT, NULL, 2, MPI_INT, source, MPI_COMM_WORLD);
 			
 			//TODO specify where to run
+			//In the end, they just chase the ball no matter what
 			target[0] = inmsg[0];
 			target[1] = inmsg[1];
 			
@@ -233,6 +234,7 @@ int main(int argc,char *argv[]) {
 			}
 			
 			//TODO specify where to kick
+			//In the end, they just kick towards the goal
 			if (rank < 23) {
 				if (i<ROUNDS) {
 					target[0] = -1;
