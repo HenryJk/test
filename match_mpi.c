@@ -1,5 +1,6 @@
 #include <mpi.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <math.h>
 
@@ -7,7 +8,7 @@
 //Player structure, can run, kick, and challenge
 typedef struct {
 	int coord[2];
-	int speed, dribbling, kick;
+	int speed, dribbling, kick, total_distance, total_reach, total_kick;
 } Player;
 int initPlayer(Player*);
 int Run(Player*, int*, int*);
@@ -63,7 +64,7 @@ int main(int argc,char *argv[]) {
 	MPI_Comm_split(MPI_COMM_WORLD, color, rank, &team_comm);
 	
 	if (rank < 12) {
-		int source, buffer[2*NPROCS];
+		int source, buffer[2*NPROCS], winner_id;
 		Field myField;
 		resetField(&myField);
 		//for each round
@@ -150,7 +151,7 @@ int main(int argc,char *argv[]) {
 			MPI_Bcast(myField.challengers, PLAYERNUM, MPI_INT, source, team_comm);
 			
 			//broadcast the winner to all field as well
-			buffer[0] = winner_id
+			buffer[0] = winner_id;
 			MPI_Bcast(buffer, 1, MPI_INT, source, team_comm);
 			
 			//remember who is winning
@@ -196,7 +197,7 @@ int main(int argc,char *argv[]) {
 		for (i=0; i<2*ROUNDS; i++) {
 			
 			//get ball coord from field 0
-			MPI_Bcast(inmsg, 2, MPI_INT, 0, tag, MPI_COMM_WORLD, &Stat);
+			MPI_Bcast(inmsg, 2, MPI_INT, 0, MPI_COMM_WORLD);
 			
 			//afterwards, the source is always the field that has the ball
 			source = inmsg[0]/32 + 4 * (inmsg[1]/32);
@@ -248,7 +249,7 @@ int main(int argc,char *argv[]) {
 					target[0] = -1;
 				}
 			}
-			target[1] = WIDTH/2
+			target[1] = WIDTH/2;
 			
 			//put where the player want to kick towards in outmsg
 			Kick(&myPlayer, target, outmsg);
@@ -279,7 +280,7 @@ int getWinner(Field* myField) {
 	}
 	for (j=0; j<PLAYERNUM; j++) {
 		if (myField->challengers[j] == maxChallenge) {
-			MaxChallengers[totalReaching] = j;
+			MaxChallengers[totalMaxChallenger] = j;
 			totalMaxChallenger++;
 		}
 	}
