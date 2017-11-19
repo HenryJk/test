@@ -224,7 +224,7 @@ int main(int argc,char *argv[]) {
 			}
 			
 			//send challenge to field source
-			outmsg[0] = Challenge(myPlayer);
+			outmsg[0] = Challenge(&myPlayer);
 			MPI_Gather(outmsg, 1, MPI_INT, NULL, 1, MPI_INT, source, MPI_COMM_WORLD);
 			
 			//receive who win
