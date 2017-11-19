@@ -1,0 +1,7 @@
+all: training_mpi match_mpi
+training_mpi:
+	mpicc -lm training_mpi.c -o training_mpi
+match_mpi:
+	mpicc -lm match_mpi.c -o match_mpi
+clean:
+	rm training_mpi match_mpi
