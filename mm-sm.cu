@@ -38,6 +38,9 @@ long long wall_clock_time()
  *  elements from the same row are allocated at contiguous 
  *  memory addresses.
  **/
+ 
+ #define BLOCKSIZE 32
+ 
 void allocate_matrix(matrix* m)
 {
 	int i;
@@ -167,8 +170,6 @@ void print_matrix(matrix m)
 		printf("\n");
 	}
 }
-
-#define BLOCKSIZE 32
 
 void work()
 {
