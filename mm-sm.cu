@@ -153,7 +153,7 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 		i = count * blockDim.x + tidx;
 		j = blockIdx.y * blockDim.y + tidy;
 		if (i<size && j<size) {
-			sdataB[tidx][tidy] = a.element[i][j];
+			sdataB[tidx][tidy] = b.element[i][j];
 		} else {
 			sdataB[tidx][tidy] = 0;
 		}
