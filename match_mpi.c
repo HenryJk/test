@@ -296,7 +296,8 @@ int initPlayer(Player* myPlayer) {
 	myPlayer->coord[0] = rand()%LENGTH;
 	myPlayer->coord[1] = rand()%WIDTH;
 	myPlayer->speed = 1 + rand()%10;
-	myPlayer->dribbling = 1 + rand()%(14 - myPlayer->speed);
+	int maxDribbling = (14 - myPlayer->speed > 10) ? 10 : 14 - myPlayer->speed;
+	myPlayer->dribbling = 1 + rand()%maxDribbling;
 	myPlayer->kick = 15 - myPlayer->speed - myPlayer->dribbling;
 	return 0;
 }
