@@ -127,17 +127,32 @@ void mm(matrix a, matrix b, matrix result)
  */
 __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 {
-	float c = 0.0;
+	__shared__ float sdataA[BLOCKSIZE][BLOCKSIZE];
+	__shared__ float sdataB[BLOCKSIZE][BLOCKSIZE];
+	float c = 0.0, temp;
+	int tidx = threadIdx.x, tidy = threadIdx.y;
 	int i = blockIdx.x * blockDim.x + threadIdx.x; 
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
-	int k;
+	int k, count;
 
 	if (i >= size || j >= size)
 		return;
-
-	for(k = 0; k < size; k++)
-		c += a.element[i][k] * b.element[k][j];
-		result.element[i][j] = c;
+	
+	for (count = 0; count < size/BLOCKSIZE; count++) {
+		temp = 0.0;
+		i = count * blockDim.x + tidx;
+		j = blockIdx.y * blockDim.y + tidy;
+		sdataA[tidx][tidy] = a.element[i][j];
+		i = blockIdx.x * blockDim.x + tidx;
+		j = count * blockDim.y + tidy;
+		sdataB[tidx][tidy] = b.element[i][j];
+		
+		for(k = 0; k < BLOCKSIZE; k++) {
+			temp += sdataA[tidx][k] * sdataB[k][tidy];
+		}
+		c += temp;
+	}
+	result.element[i][j] = c;
 }
 
 void print_matrix(matrix m)
@@ -153,7 +168,7 @@ void print_matrix(matrix m)
 	}
 }
 
-
+#define BLOCKSIZE 32
 
 void work()
 {
@@ -179,8 +194,8 @@ void work()
         fprintf(stderr, "Matrix multiplication on CPU took %1.2f seconds\n", ((float)(after - before))/1000000000);
 
 	// Perform CUDA matrix  multiplication
-	dim3 block(32, 32);			// a block of 32 x 32 CUDA threads
-	dim = (size % 32 == 0) ? size / 32 : size / 32 + 1; 
+	dim3 block(BLOCKSIZE, BLOCKSIZE);			// a block of 32 x 32 CUDA threads
+	dim = (size % BLOCKSIZE == 0) ? size / BLOCKSIZE : size / BLOCKSIZE + 1; 
 	dim3 grid(dim, dim);	// a grid of CUDA thread blocks
 	before = wall_clock_time();
 	mm_kernel<<<grid, block>>>(a, b, result2, size);
