@@ -136,8 +136,10 @@ int main(int argc,char *argv[]) {
 			MPI_Gather(buffer, 2, MPI_INT, buffer, 2, MPI_INT, source, MPI_COMM_WORLD);
 			
 			//remember intended kick target only from the winner
-			myField.ball_coord[0] = buffer[2*winner_id];
-			myField.ball_coord[1] = buffer[2*winner_id+1];
+			if (winner_id >=0) {
+				myField.ball_coord[0] = buffer[2*winner_id];
+				myField.ball_coord[1] = buffer[2*winner_id+1];
+			}
 			
 			//if ball is out of bound, reset field
 			if (myField.ball_coord[0] > LENGTH - 1 || myField.ball_coord[0] < 0 || myField.ball_coord[1] > WIDTH - 1 || myField.ball_coord[1] < 0) {
@@ -293,8 +295,8 @@ int getWinner(Field* myField) {
 int initPlayer(Player* myPlayer) {
 	myPlayer->coord[0] = rand()%LENGTH;
 	myPlayer->coord[1] = rand()%WIDTH;
-	myPlayer->speed = rand()%11;
-	myPlayer->dribbling = rand()%(16 - myPlayer->speed);
+	myPlayer->speed = 1 + rand()%10;
+	myPlayer->dribbling = 1 + rand()%(14 - myPlayer->speed);
 	myPlayer->kick = 15 - myPlayer->speed - myPlayer->dribbling;
 	return 0;
 }
