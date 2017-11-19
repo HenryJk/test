@@ -138,17 +138,25 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
 	int k, count;
 
-	if (i >= size || j >= size)
+	if (i >= (size+BLOCKSIZE-1)/BLOCKSIZE * BLOCKSIZE || j >= (size+BLOCKSIZE-1)/BLOCKSIZE * BLOCKSIZE)
 		return;
 	
-	for (count = 0; count < size/BLOCKSIZE; count++) {
+	for (count = 0; count < (size+BLOCKSIZE-1)/BLOCKSIZE; count++) {
 		temp = 0.0;
 		i = blockIdx.x * blockDim.x + tidx;
 		j = count * blockDim.y + tidy;
-		sdataA[tidx][tidy] = a.element[i][j];
+		if (i<size && j<size) {
+			sdataA[tidx][tidy] = a.element[i][j];
+		} else {
+			sdataA[tidx][tidy] = 0;
+		}
 		i = count * blockDim.x + tidx;
 		j = blockIdx.y * blockDim.y + tidy;
-		sdataB[tidx][tidy] = b.element[i][j];
+		if (i<size && j<size) {
+			sdataB[tidx][tidy] = a.element[i][j];
+		} else {
+			sdataB[tidx][tidy] = 0;
+		}
 		__syncthreads();
 		
 		for(k = 0; k < BLOCKSIZE; k++) {
@@ -157,6 +165,8 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 		c += temp;
 		__syncthreads();
 	}
+	i = blockIdx.x * blockDim.x + threadIdx.x; 
+	j = blockIdx.y * blockDim.y + threadIdx.y;
 	result.element[i][j] = c;
 }
 
