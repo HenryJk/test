@@ -39,7 +39,7 @@ long long wall_clock_time()
  *  memory addresses.
  **/
  
- #define BLOCKSIZE 32
+ #define BLOCKSIZE 16
  
 void allocate_matrix(matrix* m)
 {
