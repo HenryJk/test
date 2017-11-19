@@ -137,7 +137,7 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 
 	for(k = 0; k < size; k++)
 		c += a.element[i][k] * b.element[k][j];
-		result[i][j] = c;
+		result.element[i][j] = c;
 }
 
 void print_matrix(matrix m)
