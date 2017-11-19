@@ -234,6 +234,14 @@ void work()
 		printf("The result matrices are identical!\n");
 	else
 		printf("Difference in result matrices at element (%d, %d)!\n", i, j);
+	
+	for (i = 0; i<size; i++) {
+		for (j = 0; j<size; j++) {
+			printf("%f ", result1.element[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 
 	for (i = 0; i<size; i++) {
 		for (j = 0; j<size; j++) {
