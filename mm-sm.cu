@@ -39,7 +39,7 @@ long long wall_clock_time()
  *  memory addresses.
  **/
  
- #define BLOCKSIZE 16
+ #define BLOCKSIZE 2
  
 void allocate_matrix(matrix* m)
 {
@@ -145,14 +145,14 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 		temp = 0.0;
 		i = blockIdx.x * blockDim.x + tidx;
 		j = count * blockDim.y + tidy;
-		if (i<=size && j<=size) {
+		if (i<size && j<size) {
 			sdataA[tidx][tidy] = a.element[i][j];
 		} else {
 			sdataA[tidx][tidy] = 0;
 		}
 		i = count * blockDim.x + tidx;
 		j = blockIdx.y * blockDim.y + tidy;
-		if (i<=size && j<=size) {
+		if (i<size && j<size) {
 			sdataB[tidx][tidy] = a.element[i][j];
 		} else {
 			sdataB[tidx][tidy] = 0;
@@ -235,6 +235,27 @@ void work()
 	else
 		printf("Difference in result matrices at element (%d, %d)!\n", i, j);
 
+	for (i = 0; i<size; i++) {
+		for (j = 0; j<size; j++) {
+			printf("%d ", result2.element[i][j]);
+		}
+		printf("\n");
+	}
+	
+	for (i = 0; i<size; i++) {
+		for (j = 0; j<size; j++) {
+			printf("%d ", a.element[i][j]);
+		}
+		printf("\n");
+	}
+	
+	for (i = 0; i<size; i++) {
+		for (j = 0; j<size; j++) {
+			printf("%d ", b.element[i][j]);
+		}
+		printf("\n");
+	}
+	
 	free_matrix(&a);
 	free_matrix(&b);
 	free_matrix(&result1);
