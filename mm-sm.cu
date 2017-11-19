@@ -237,21 +237,21 @@ void work()
 
 	for (i = 0; i<size; i++) {
 		for (j = 0; j<size; j++) {
-			printf("%d ", result2.element[i][j]);
+			printf("%f ", result2.element[i][j]);
 		}
 		printf("\n");
 	}
-	
+	printf("\n");
 	for (i = 0; i<size; i++) {
 		for (j = 0; j<size; j++) {
-			printf("%d ", a.element[i][j]);
+			printf("%f ", a.element[i][j]);
 		}
 		printf("\n");
 	}
-	
+	printf("\n");
 	for (i = 0; i<size; i++) {
 		for (j = 0; j<size; j++) {
-			printf("%d ", b.element[i][j]);
+			printf("%f ", b.element[i][j]);
 		}
 		printf("\n");
 	}
