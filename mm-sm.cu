@@ -143,11 +143,11 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 	
 	for (count = 0; count < size/BLOCKSIZE; count++) {
 		temp = 0.0;
-		i = count * blockDim.x + tidx;
-		j = blockIdx.y * blockDim.y + tidy;
-		sdataA[tidx][tidy] = a.element[i][j];
 		i = blockIdx.x * blockDim.x + tidx;
 		j = count * blockDim.y + tidy;
+		sdataA[tidx][tidy] = a.element[i][j];
+		i = count * blockDim.x + tidx;
+		j = blockIdx.y * blockDim.y + tidy;
 		sdataB[tidx][tidy] = b.element[i][j];
 		
 		for(k = 0; k < BLOCKSIZE; k++) {
