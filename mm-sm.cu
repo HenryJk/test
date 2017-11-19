@@ -167,7 +167,9 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 	}
 	i = blockIdx.x * blockDim.x + threadIdx.x; 
 	j = blockIdx.y * blockDim.y + threadIdx.y;
-	result.element[i][j] = c;
+	if (i<size && j<size) {
+		result.element[i][j] = c;
+	}
 }
 
 void print_matrix(matrix m)
