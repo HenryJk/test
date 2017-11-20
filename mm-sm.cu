@@ -39,7 +39,7 @@ long long wall_clock_time()
  *  memory addresses.
  **/
  
-#define BLOCKSIZE 16
+#define BLOCKSIZE 32
  
 void allocate_matrix(matrix* m)
 {
@@ -138,7 +138,7 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 	int blockArea = blockDim.x * blockDim.y;
 	int indexA, indexB, index, k;
 	
-	indexA = tidx*blockDim.x+tidy;
+	indexA = tidx*(blockDim.x)+tidy;
 	indexB = blockArea + indexA;
 
 	if (i >= (size+blockDim.x-1)/blockDim.x * blockDim.x || j >= (size+blockDim.y-1)/blockDim.y * blockDim.y)
@@ -158,9 +158,12 @@ __global__ void mm_kernel(matrix a, matrix b, matrix result, int size)
 		//syncthreads
 		__syncthreads();
 		
+		//sum it up
 		for(k = 0; k < blockDim.y; k++) {
 			c += sdata[tidx * blockDim.x + k] * sdata[blockArea + k * blockDim.x + tidy];
 		}
+		
+		//syncthreads
 		__syncthreads();
 	}
 	i = blockIdx.x * blockDim.x + threadIdx.x; 
